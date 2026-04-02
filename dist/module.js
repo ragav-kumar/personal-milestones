@@ -123,6 +123,17 @@ var ChecklistApp = class extends BaseChecklistApp {
 // src/module.ts
 var MODULE_ID2 = "personal-milestones";
 var openApps = /* @__PURE__ */ new Map();
+function resolveSheetRoot(html) {
+  if (html instanceof HTMLElement) return html;
+  if (!html || typeof html !== "object") return null;
+  const candidate = html;
+  if (candidate[0] instanceof HTMLElement) return candidate[0];
+  if (typeof candidate.get === "function") {
+    const first = candidate.get(0);
+    if (first instanceof HTMLElement) return first;
+  }
+  return null;
+}
 Hooks.once("init", () => {
   console.log(`${MODULE_ID2} | init`);
 });
@@ -132,15 +143,21 @@ Hooks.once("ready", () => {
 Hooks.on("renderActorSheet", (app, html) => {
   const actor = app.actor;
   if (!actor) return;
-  if (html.find(".personal-milestones-open").length > 0) return;
-  const openButton = $(
-    `<button type="button" class="personal-milestones-open"><i class="fas fa-list-check"></i> Milestones</button>`
-  );
-  openButton.on("click", () => {
+  const root = resolveSheetRoot(html);
+  if (!root) {
+    console.warn(`${MODULE_ID2} | Could not resolve Actor sheet root for button injection.`);
+    return;
+  }
+  if (root.querySelector(".personal-milestones-open")) return;
+  const openButton = document.createElement("button");
+  openButton.type = "button";
+  openButton.className = "personal-milestones-open";
+  openButton.innerHTML = `<i class="fas fa-list-check"></i> Milestones`;
+  openButton.addEventListener("click", () => {
     const appKey = actor.uuid;
     const existing = openApps.get(appKey);
     if (existing?.rendered) {
-      existing.render(true);
+      void existing.render(true);
       return;
     }
     openApps.delete(appKey);
@@ -148,11 +165,16 @@ Hooks.on("renderActorSheet", (app, html) => {
     openApps.set(appKey, app2);
     void app2.render(true);
   });
-  const headerActions = html.find(".window-header .header-control").first();
-  if (headerActions.length > 0) {
-    headerActions.before(openButton);
+  const headerActions = root.querySelector(".window-header .header-control");
+  if (headerActions?.parentElement) {
+    headerActions.parentElement.insertBefore(openButton, headerActions);
     return;
   }
-  const fallback = html.find(".window-header .window-title").first();
-  fallback.after(openButton);
+  const title = root.querySelector(".window-header .window-title");
+  if (title) {
+    title.insertAdjacentElement("afterend", openButton);
+    return;
+  }
+  const header = root.querySelector(".window-header");
+  header?.appendChild(openButton);
 });

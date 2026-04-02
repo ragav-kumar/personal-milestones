@@ -3,6 +3,25 @@ import { ChecklistApp } from "./checklist/ChecklistApp";
 const MODULE_ID = "personal-milestones";
 const openApps = new Map<string, ChecklistApp>();
 
+function resolveSheetRoot(html: unknown): HTMLElement | null {
+  if (html instanceof HTMLElement) return html;
+
+  if (!html || typeof html !== "object") return null;
+
+  const candidate = html as {
+    0?: unknown;
+    get?: (index: number) => unknown;
+  };
+
+  if (candidate[0] instanceof HTMLElement) return candidate[0];
+  if (typeof candidate.get === "function") {
+    const first = candidate.get(0);
+    if (first instanceof HTMLElement) return first;
+  }
+
+  return null;
+}
+
 Hooks.once("init", () => {
   console.log(`${MODULE_ID} | init`);
 });
@@ -11,20 +30,28 @@ Hooks.once("ready", () => {
   console.log(`${MODULE_ID} | ready`);
 });
 
-Hooks.on("renderActorSheet", (app: ActorSheet, html: JQuery) => {
+Hooks.on("renderActorSheet", (app: ActorSheet, html: unknown) => {
   const actor = app.actor;
   if (!actor) return;
-  if (html.find(".personal-milestones-open").length > 0) return;
 
-  const openButton = $(
-    `<button type="button" class="personal-milestones-open"><i class="fas fa-list-check"></i> Milestones</button>`
-  );
+  const root = resolveSheetRoot(html);
+  if (!root) {
+    console.warn(`${MODULE_ID} | Could not resolve Actor sheet root for button injection.`);
+    return;
+  }
 
-  openButton.on("click", () => {
+  if (root.querySelector(".personal-milestones-open")) return;
+
+  const openButton = document.createElement("button");
+  openButton.type = "button";
+  openButton.className = "personal-milestones-open";
+  openButton.innerHTML = `<i class="fas fa-list-check"></i> Milestones`;
+
+  openButton.addEventListener("click", () => {
     const appKey = actor.uuid;
     const existing = openApps.get(appKey);
     if (existing?.rendered) {
-      existing.render(true);
+      void existing.render(true);
       return;
     }
 
@@ -36,12 +63,18 @@ Hooks.on("renderActorSheet", (app: ActorSheet, html: JQuery) => {
     void app.render(true);
   });
 
-  const headerActions = html.find(".window-header .header-control").first();
-  if (headerActions.length > 0) {
-    headerActions.before(openButton);
+  const headerActions = root.querySelector(".window-header .header-control");
+  if (headerActions?.parentElement) {
+    headerActions.parentElement.insertBefore(openButton, headerActions);
     return;
   }
 
-  const fallback = html.find(".window-header .window-title").first();
-  fallback.after(openButton);
+  const title = root.querySelector(".window-header .window-title");
+  if (title) {
+    title.insertAdjacentElement("afterend", openButton);
+    return;
+  }
+
+  const header = root.querySelector(".window-header");
+  header?.appendChild(openButton);
 });
