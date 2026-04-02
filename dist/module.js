@@ -38,6 +38,7 @@ function makeChecklistItem(label, order) {
 }
 
 // src/checklist/ChecklistApp.ts
+var MODULE_ID2 = "personal-milestones";
 var BaseChecklistApp = foundry.applications.api.HandlebarsApplicationMixin(
   foundry.applications.api.ApplicationV2
 );
@@ -56,7 +57,7 @@ var ChecklistApp = class extends BaseChecklistApp {
   };
   static PARTS = {
     checklist: {
-      template: "templates/checklist.hbs",
+      template: `modules/${MODULE_ID2}/templates/checklist.hbs`,
       root: true
     }
   };
@@ -121,7 +122,7 @@ var ChecklistApp = class extends BaseChecklistApp {
 };
 
 // src/module.ts
-var MODULE_ID2 = "personal-milestones";
+var MODULE_ID3 = "personal-milestones";
 var openApps = /* @__PURE__ */ new Map();
 function resolveSheetRoot(html) {
   if (html instanceof HTMLElement) return html;
@@ -177,20 +178,20 @@ function injectMilestonesButton(actor, root) {
     windowHeader.appendChild(openButton);
     return;
   }
-  console.warn(`${MODULE_ID2} | Could not find a header target for milestones button injection.`);
+  console.warn(`${MODULE_ID3} | Could not find a header target for milestones button injection.`);
 }
 Hooks.once("init", () => {
-  console.log(`${MODULE_ID2} | init`);
+  console.log(`${MODULE_ID3} | init`);
 });
 Hooks.once("ready", () => {
-  console.log(`${MODULE_ID2} | ready`);
+  console.log(`${MODULE_ID3} | ready`);
 });
 Hooks.on("renderActorSheet", (app, html) => {
   const actor = getActorFromApp(app);
   if (!actor) return;
   const root = resolveSheetRoot(html);
   if (!root) {
-    console.warn(`${MODULE_ID2} | Could not resolve Actor sheet root for button injection.`);
+    console.warn(`${MODULE_ID3} | Could not resolve Actor sheet root for button injection.`);
     return;
   }
   injectMilestonesButton(actor, root);

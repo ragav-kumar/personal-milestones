@@ -1,5 +1,7 @@
 import { getChecklistState, makeChecklistItem, setChecklistState, type ChecklistItem } from "./store";
 
+const MODULE_ID = "personal-milestones";
+
 const BaseChecklistApp = foundry.applications.api.HandlebarsApplicationMixin(
   foundry.applications.api.ApplicationV2
 );
@@ -27,7 +29,7 @@ export class ChecklistApp extends BaseChecklistApp {
 
   static override PARTS = {
     checklist: {
-      template: "templates/checklist.hbs",
+      template: `modules/${MODULE_ID}/templates/checklist.hbs`,
       root: true
     }
   };
