@@ -1,0 +1,23 @@
+{
+  "id": "personal-milestones",
+  "title": "Personal Milestones",
+  "description": "Per-actor checklist milestones for players.",
+  "version": "0.1.0",
+  "compatibility": {
+    "minimum": "13",
+    "verified": "13"
+  },
+  "authors": [
+    {
+      "name": "Your Name"
+    }
+  ],
+  "esmodules": [
+    "dist/module.js"
+  ],
+  "styles": [
+    "styles/checklist.css"
+  ],
+  "manifest": "",
+  "download": ""
+}

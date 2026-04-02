@@ -1,0 +1,32 @@
+<section class="personal-milestones">
+  <header class="pm-header">
+    <h2>{{actorName}} Milestones</h2>
+  </header>
+
+  <div class="pm-add-row">
+    <input
+      class="pm-new-label"
+      type="text"
+      name="newLabel"
+      placeholder="Add a new milestone"
+      maxlength="120"
+    />
+    <button type="button" class="pm-add">Add</button>
+  </div>
+
+  <ul class="pm-list">
+    {{#if items.length}}
+      {{#each items}}
+        <li class="pm-item" data-item-id="{{id}}">
+          <label class="pm-item-label">
+            <input class="pm-toggle" type="checkbox" {{#if completed}}checked{{/if}} />
+            <span class="pm-item-text {{#if completed}}is-complete{{/if}}">{{label}}</span>
+          </label>
+          <button type="button" class="pm-remove" aria-label="Remove milestone">Remove</button>
+        </li>
+      {{/each}}
+    {{else}}
+      <li class="pm-empty">No milestones yet.</li>
+    {{/if}}
+  </ul>
+</section>
