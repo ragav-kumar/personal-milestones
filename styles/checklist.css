@@ -1,24 +1,56 @@
-.personal-milestones-open {
-  margin-left: 0.5rem;
-}
-
 .personal-milestones {
   padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
-.pm-header h2 {
-  margin: 0 0 0.75rem;
-  font-size: 1rem;
+.personal-milestones-tab-button i {
+  margin-right: 0.35rem;
+}
+
+.pm-top-matter {
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--color-border-light-primary);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--color-cool-2) 12%, transparent);
+}
+
+.pm-top-matter p {
+  margin: 0.3rem 0;
+}
+
+.pm-progress {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 0.4rem 0.55rem;
+  border-left: 3px solid var(--color-level-warning);
+  background: color-mix(in srgb, var(--color-level-warning-bg) 40%, transparent);
+}
+
+.pm-section {
+  border: 1px solid var(--color-border-light-primary);
+  border-radius: 6px;
+  padding: 0.55rem;
+}
+
+.pm-section h3 {
+  margin: 0 0 0.4rem;
+  font-size: 0.95rem;
 }
 
 .pm-add-row {
   display: flex;
-  gap: 0.5rem;
-  margin-bottom: 0.75rem;
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+  flex-wrap: wrap;
 }
 
 .pm-add-row input {
   flex: 1;
+  min-width: 14ch;
 }
 
 .pm-list {
@@ -35,7 +67,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
-  padding: 0.4rem 0.5rem;
+  padding: 0.35rem 0.45rem;
   border: 1px solid var(--color-border-light-primary);
   border-radius: 4px;
 }
@@ -49,6 +81,43 @@
 .pm-item-text.is-complete {
   text-decoration: line-through;
   opacity: 0.75;
+}
+
+.pm-item-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.pm-source {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  padding: 0.15rem 0.35rem;
+  border-radius: 999px;
+}
+
+.pm-source-global {
+  background: color-mix(in srgb, var(--color-cool-4) 25%, transparent);
+}
+
+.pm-source-actor {
+  background: color-mix(in srgb, var(--color-level-success) 20%, transparent);
+}
+
+.pm-gm-controls {
+  margin-top: 0.3rem;
+  border-top: 1px dashed var(--color-border-light-primary);
+  padding-top: 0.5rem;
+}
+
+.pm-gm-controls h3 {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.pm-reset-progress {
+  margin-top: 0.45rem;
 }
 
 .pm-empty {

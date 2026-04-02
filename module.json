@@ -2,7 +2,7 @@
   "id": "personal-milestones",
   "title": "Personal Milestones",
   "description": "Per-actor checklist milestones for players.",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "compatibility": {
     "minimum": "13",
     "verified": "13"
@@ -18,6 +18,6 @@
   "styles": [
     "styles/checklist.css"
   ],
-  "manifest": "https://raw.githubusercontent.com/ragav-kumar/personal-milestones/v0.1.4/module.json",
-  "download": "https://codeload.github.com/ragav-kumar/personal-milestones/zip/refs/tags/v0.1.4"
+  "manifest": "https://raw.githubusercontent.com/ragav-kumar/personal-milestones/v0.2.0/module.json",
+  "download": "https://codeload.github.com/ragav-kumar/personal-milestones/zip/refs/tags/v0.2.0"
 }

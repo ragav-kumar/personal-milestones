@@ -1,18 +1,25 @@
 {
   "name": "personal-milestones",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "private": true,
   "description": "Foundry VTT module: per-actor checklist milestones",
   "type": "module",
   "scripts": {
+    "check": "npm run lint && npm run typecheck && npm run build",
     "build": "esbuild src/module.ts --bundle --format=esm --target=es2022 --outfile=dist/module.js",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
     "watch": "esbuild src/module.ts --bundle --format=esm --target=es2022 --outfile=dist/module.js --watch",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@league-of-foundry-developers/foundry-vtt-types": "latest",
     "@types/jquery": "^3.5.33",
     "esbuild": "^0.25.4",
-    "typescript": "^5.8.3"
+    "eslint": "^10.1.0",
+    "globals": "^17.4.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.58.0"
   }
 }
