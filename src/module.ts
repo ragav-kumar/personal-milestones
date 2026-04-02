@@ -3,6 +3,10 @@ import { ChecklistApp } from "./checklist/ChecklistApp";
 const MODULE_ID = "personal-milestones";
 const openApps = new Map<string, ChecklistApp>();
 
+type ActorSheetLike = {
+  actor?: Actor | null;
+};
+
 function resolveSheetRoot(html: unknown): HTMLElement | null {
   if (html instanceof HTMLElement) return html;
 
@@ -22,24 +26,13 @@ function resolveSheetRoot(html: unknown): HTMLElement | null {
   return null;
 }
 
-Hooks.once("init", () => {
-  console.log(`${MODULE_ID} | init`);
-});
+function getActorFromApp(app: unknown): Actor | null {
+  if (!app || typeof app !== "object") return null;
+  const candidate = app as ActorSheetLike;
+  return candidate.actor ?? null;
+}
 
-Hooks.once("ready", () => {
-  console.log(`${MODULE_ID} | ready`);
-});
-
-Hooks.on("renderActorSheet", (app: ActorSheet, html: unknown) => {
-  const actor = app.actor;
-  if (!actor) return;
-
-  const root = resolveSheetRoot(html);
-  if (!root) {
-    console.warn(`${MODULE_ID} | Could not resolve Actor sheet root for button injection.`);
-    return;
-  }
-
+function injectMilestonesButton(actor: Actor, root: HTMLElement): void {
   if (root.querySelector(".personal-milestones-open")) return;
 
   const openButton = document.createElement("button");
@@ -75,6 +68,45 @@ Hooks.on("renderActorSheet", (app: ActorSheet, html: unknown) => {
     return;
   }
 
-  const header = root.querySelector(".window-header");
-  header?.appendChild(openButton);
+  const sheetHeader = root.querySelector(".sheet-header");
+  if (sheetHeader) {
+    sheetHeader.appendChild(openButton);
+    return;
+  }
+
+  const windowHeader = root.querySelector(".window-header");
+  if (windowHeader) {
+    windowHeader.appendChild(openButton);
+    return;
+  }
+
+  console.warn(`${MODULE_ID} | Could not find a header target for milestones button injection.`);
+}
+
+Hooks.once("init", () => {
+  console.log(`${MODULE_ID} | init`);
+});
+
+Hooks.once("ready", () => {
+  console.log(`${MODULE_ID} | ready`);
+});
+
+Hooks.on("renderActorSheet", (app: ActorSheet, html: unknown) => {
+  const actor = getActorFromApp(app);
+  if (!actor) return;
+
+  const root = resolveSheetRoot(html);
+  if (!root) {
+    console.warn(`${MODULE_ID} | Could not resolve Actor sheet root for button injection.`);
+    return;
+  }
+
+  injectMilestonesButton(actor, root);
+});
+
+Hooks.on("renderApplicationV2", (app: unknown, element: HTMLElement) => {
+  const actor = getActorFromApp(app);
+  if (!actor) return;
+
+  injectMilestonesButton(actor, element);
 });

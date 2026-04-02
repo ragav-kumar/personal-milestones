@@ -134,20 +134,12 @@ function resolveSheetRoot(html) {
   }
   return null;
 }
-Hooks.once("init", () => {
-  console.log(`${MODULE_ID2} | init`);
-});
-Hooks.once("ready", () => {
-  console.log(`${MODULE_ID2} | ready`);
-});
-Hooks.on("renderActorSheet", (app, html) => {
-  const actor = app.actor;
-  if (!actor) return;
-  const root = resolveSheetRoot(html);
-  if (!root) {
-    console.warn(`${MODULE_ID2} | Could not resolve Actor sheet root for button injection.`);
-    return;
-  }
+function getActorFromApp(app) {
+  if (!app || typeof app !== "object") return null;
+  const candidate = app;
+  return candidate.actor ?? null;
+}
+function injectMilestonesButton(actor, root) {
   if (root.querySelector(".personal-milestones-open")) return;
   const openButton = document.createElement("button");
   openButton.type = "button";
@@ -161,9 +153,9 @@ Hooks.on("renderActorSheet", (app, html) => {
       return;
     }
     openApps.delete(appKey);
-    const app2 = new ChecklistApp(actor);
-    openApps.set(appKey, app2);
-    void app2.render(true);
+    const app = new ChecklistApp(actor);
+    openApps.set(appKey, app);
+    void app.render(true);
   });
   const headerActions = root.querySelector(".window-header .header-control");
   if (headerActions?.parentElement) {
@@ -175,6 +167,36 @@ Hooks.on("renderActorSheet", (app, html) => {
     title.insertAdjacentElement("afterend", openButton);
     return;
   }
-  const header = root.querySelector(".window-header");
-  header?.appendChild(openButton);
+  const sheetHeader = root.querySelector(".sheet-header");
+  if (sheetHeader) {
+    sheetHeader.appendChild(openButton);
+    return;
+  }
+  const windowHeader = root.querySelector(".window-header");
+  if (windowHeader) {
+    windowHeader.appendChild(openButton);
+    return;
+  }
+  console.warn(`${MODULE_ID2} | Could not find a header target for milestones button injection.`);
+}
+Hooks.once("init", () => {
+  console.log(`${MODULE_ID2} | init`);
+});
+Hooks.once("ready", () => {
+  console.log(`${MODULE_ID2} | ready`);
+});
+Hooks.on("renderActorSheet", (app, html) => {
+  const actor = getActorFromApp(app);
+  if (!actor) return;
+  const root = resolveSheetRoot(html);
+  if (!root) {
+    console.warn(`${MODULE_ID2} | Could not resolve Actor sheet root for button injection.`);
+    return;
+  }
+  injectMilestonesButton(actor, root);
+});
+Hooks.on("renderApplicationV2", (app, element) => {
+  const actor = getActorFromApp(app);
+  if (!actor) return;
+  injectMilestonesButton(actor, element);
 });
