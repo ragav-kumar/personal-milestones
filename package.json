@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@foundryvtt/foundryvtt-types": "^13.346.0",
+    "@league-of-foundry-developers/foundry-vtt-types": "latest",
+    "@types/jquery": "^3.5.33",
     "esbuild": "^0.25.4",
     "typescript": "^5.8.3"
   }

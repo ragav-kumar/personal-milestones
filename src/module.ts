@@ -21,19 +21,19 @@ Hooks.on("renderActorSheet", (app: ActorSheet, html: JQuery) => {
   );
 
   openButton.on("click", () => {
-    const existing = openApps.get(actor.id);
-    if (existing) {
+    const appKey = actor.uuid;
+    const existing = openApps.get(appKey);
+    if (existing?.rendered) {
       existing.render(true);
       return;
     }
 
+    openApps.delete(appKey);
+
     const app = new ChecklistApp(actor);
-    openApps.set(actor.id, app);
+    openApps.set(appKey, app);
 
     void app.render(true);
-    app.once("close", () => {
-      openApps.delete(actor.id);
-    });
   });
 
   const headerActions = html.find(".window-header .header-control").first();

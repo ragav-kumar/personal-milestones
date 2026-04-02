@@ -12,6 +12,11 @@ export interface ChecklistState {
   items: ChecklistItem[];
 }
 
+type ActorFlagAdapter = {
+  getFlag(scope: string, key: string): unknown;
+  setFlag(scope: string, key: string, value: unknown): Promise<unknown>;
+};
+
 function asChecklistItem(item: unknown, index: number): ChecklistItem | null {
   if (!item || typeof item !== "object") return null;
   const candidate = item as Partial<ChecklistItem>;
@@ -42,13 +47,13 @@ function normalize(state: unknown): ChecklistState {
 }
 
 export async function getChecklistState(actor: Actor): Promise<ChecklistState> {
-  const flag = actor.getFlag(MODULE_ID, CHECKLIST_FLAG_KEY);
+  const flag = (actor as ActorFlagAdapter).getFlag(MODULE_ID, CHECKLIST_FLAG_KEY);
   return normalize(flag);
 }
 
 export async function setChecklistState(actor: Actor, state: ChecklistState): Promise<void> {
   const normalized = normalize(state);
-  await actor.setFlag(MODULE_ID, CHECKLIST_FLAG_KEY, normalized);
+  await (actor as ActorFlagAdapter).setFlag(MODULE_ID, CHECKLIST_FLAG_KEY, normalized);
 }
 
 export function makeChecklistItem(label: string, order: number): ChecklistItem {
